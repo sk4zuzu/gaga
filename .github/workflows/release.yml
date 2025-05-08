@@ -1,0 +1,45 @@
+---
+name: Release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install latest Helm
+        uses: azure/setup-helm@v4
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          path: master
+          ref: master
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          path: gh-pages
+          ref: gh-pages
+
+      - name: Deploy Helm charts
+        run: cp -f ./master/*.tgz ./gh-pages/
+
+      - name: Re-index Helm repos
+        run: |
+          helm repo index . --url 'https://sk4zuzu.github.io/gaga/charts/'
+        working-directory: ./gh-pages/
+
+      - name: Push gh-pages
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add index.yaml *.tgz
+          git commit -m $GITHUB_REF_NAME
+          git push
+        working-directory: ./gh-pages/
