@@ -23,11 +23,14 @@ jobs:
           username: "${{ github.actor }}"
           password: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+      - name: Build and push images
+        run: make buildx _TAG="ghcr.io/${GITHUB_REPOSITORY,,}:$GITHUB_REF_NAME" BUILDX_NO_DEFAULT_ATTESTATIONS=1
 
-      - name: Build and push image(s)
-        run: make _TAG:="ghcr.io/${GITHUB_REPOSITORY,,}:$GITHUB_REF_NAME" BUILDX_NO_DEFAULT_ATTESTATIONS:=1
+      - name: Tag image (latest)
+        run: docker tag "ghcr.io/${GITHUB_REPOSITORY,,}:$GITHUB_REF_NAME" "ghcr.io/${GITHUB_REPOSITORY,,}:latest"
+
+      - name: Push image (latest)
+        run: docker push "ghcr.io/${GITHUB_REPOSITORY,,}:latest"
 
 #      - name: Checkout repository
 #        uses: actions/checkout@v4
