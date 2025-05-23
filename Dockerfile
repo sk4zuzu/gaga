@@ -1,4 +1,4 @@
-FROM alpine AS builder
+FROM --platform=$BUILDPLATFORM alpine AS builder
 
 RUN apk --no-cache add go
 

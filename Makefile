@@ -8,5 +8,5 @@ _TAG       ?= asd
 all:
 	- $(CONTAINER_TOOL) buildx create --name=gaga-builder
 	$(CONTAINER_TOOL) buildx use gaga-builder
-	$(CONTAINER_TOOL) buildx build --push --platform=$(_PLATFORMS) --tag=$(_TAG) -f Dockerfile .
+	$(CONTAINER_TOOL) buildx build --push --platform=$(_PLATFORMS) -t $(_TAG) -f Dockerfile .
 	- $(CONTAINER_TOOL) buildx rm gaga-builder
